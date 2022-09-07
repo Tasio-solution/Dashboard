@@ -31,6 +31,10 @@ app.post("/Register", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
 
+  if (!checkUsername(email)) {
+      res.send({ msg: "Username may only contain alphanumeric characters or single hyphens, and cannot begin or end with a hyphen." });
+      return;
+  }
   console.log(username, email, password);
   db.query("SELECT * FROM users WHERE email = ?", [email], (err, result) => {
     if (err) {
@@ -67,7 +71,12 @@ app.post("/login", (req, res) => {
   var userOrEmail = "username";
   if (isEmail(email)) {
     userOrEmail = "email";
-  } 
+  }else{
+    if (!checkUsername(email)) {
+      res.send({ msg: "Username may only contain alphanumeric characters or single hyphens, and cannot begin or end with a hyphen." });
+      return;
+    }
+  }
   db.query("SELECT * FROM users WHERE " + userOrEmail + " = ?", [email], (err, result) => {
     if (err) {
       res.send(err);
@@ -109,6 +118,21 @@ let isEmail = ( email ) => {
       return false;
   }
 
+}
+
+let checkUsername = ( username ) => {
+  // don't remember from where i copied this code, but this works.
+  let re = /^[a-zA-Z0-9]+(?:-[a-zA-Z0-9]+)*$/;
+  if ( re.test(username) ) {
+      // this is a valid username
+      // call setState({username: username}) to update the username
+      // or update the data in redux store.
+      return true; 
+  }
+  else {
+      // invalid username, maybe show an error to the user.
+      return false;
+  }
 }
 
 app.listen(3001, () => {

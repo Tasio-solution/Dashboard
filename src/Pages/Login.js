@@ -2,9 +2,13 @@ import "../Styles/login.css"
 import * as yup from "yup";
 import { ErrorMessage, Formik, Form, Field } from "formik";
 import Axios from "axios";
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom'
+import React, { useState } from "react";
+
+
 
 function Login({logado=false}) {
+  const [isActive, setIsActive] = useState(false);
   const handleLogin = (values) => {
     Axios.post("http://localhost:3001/login", {
       email: values.email,
@@ -15,7 +19,7 @@ function Login({logado=false}) {
         localStorage.setItem('@user', JSON.stringify(response.config.data));
         window.location.reload();
       } else {
-        alert(response.data.msg);
+        console.log(response.data.msg);
       }
     });
   };
@@ -25,8 +29,7 @@ function Login({logado=false}) {
       email: values.email,
       password: values.password,
     }).then((response) => {
-      alert(response.data.msg);
-      console.log(response);
+      console.log(response.data.msg);
     });
   };
 
@@ -56,6 +59,22 @@ function Login({logado=false}) {
       .required("Password confirmation is mandatory"),
   });
 
+  const show_hide_password = (target) =>{
+    let showHide = document.getElementById('password-control')
+    var input = document.getElementById('password-input');
+    if (input.getAttribute('type') == 'password') { 
+      setIsActive(current => !current);
+      input.setAttribute('type', 'text');
+    } else {
+      setIsActive(current => !current);
+
+      input.setAttribute('type', 'password');
+    }
+    return false;
+  }
+
+
+
   return (
     <section>
       <div className="box">
@@ -67,7 +86,7 @@ function Login({logado=false}) {
         <div className="square"></div>
         <div className="container">
           <div className="form">
-            <h1>LOGIN</h1>
+            <h2>LOGIN</h2>
             <Formik
               initialValues={{}}
               onSubmit={handleLogin}
@@ -75,8 +94,8 @@ function Login({logado=false}) {
             >
               <Form className="LoginForm">
                 <div className="inputBx">
-                  <Field name="email" type='username' autoComplete="username" />
-                  <span form="email">Email/username</span>
+                  <Field name="email" type='username' className="inputBox" autoComplete="username" />
+                  <span className="spanInput" >Email/username</span>
                   <i className="fas fa-user-circle"></i>
                   <ErrorMessage
                     component="span"
@@ -85,9 +104,9 @@ function Login({logado=false}) {
                   />
                 </div>
                 <div className="inputBx password">
-                  <Field name="password" type='password' className="form-field" />
-                  <span form="email">password</span>
-                  <a href="#" className="password-control" onClick="return show_hide_password(this)" ></a>
+                  <Field name="password" type='password' className="inputBox" id="password-input" />
+                  <span className="spanInput">password</span>
+                  <a href="#" className={isActive ? 'password-control view' : 'password-control'} onClick={event => show_hide_password(event, 100)}></a>
                   <i className="fas fa-key"></i>
                   <ErrorMessage
                     component="span"
@@ -95,16 +114,16 @@ function Login({logado=false}) {
                     className="form-error"
                   />
                 </div>
-                <label className="remember">
+                {/* <label className="remember">
                   <input type="checkbox" /> Remember me
-                </label>
+                </label> */}
                 <div className="inputBx">
-                  <input type="submit" />
+                  <input  type="submit" value="login" />
                 </div>
               </Form>
-            </Formik><p>
-            {!logado && <Link to="/Register">Register</Link>}
-            </p>
+            </Formik>
+            <p>Forgot password? {!logado && <Link to="/Register">Click Here</Link>}</p>
+            <p>Don't have an account {!logado && <Link to="/Register">Sign up</Link>}</p>
           </div>
         </div>
       </div>
@@ -113,5 +132,3 @@ function Login({logado=false}) {
 }
 
 export default Login;
-
-
