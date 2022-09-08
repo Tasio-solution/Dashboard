@@ -5,8 +5,6 @@ import Axios from "axios";
 import { Link } from 'react-router-dom'
 import React, { useState } from "react";
 
-
-
 function Login({logado=false}) {
   const [isActive, setIsActive] = useState(false);
   const handleLogin = (values) => {
@@ -67,13 +65,10 @@ function Login({logado=false}) {
       input.setAttribute('type', 'text');
     } else {
       setIsActive(current => !current);
-
       input.setAttribute('type', 'password');
     }
     return false;
   }
-
-
 
   return (
     <section>
